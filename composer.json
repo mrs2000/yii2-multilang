@@ -1,0 +1,22 @@
+{
+    "name": "mrssoft/yii2-multilang",
+    "version": "1.0.0",
+    "description": "Yii extension for application internationalization",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension", "multilingual", "i18n", "yii2-multilang"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Melnikov Ruslan",
+            "email": "mrs2000@inbox.ru"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "mrssoft\\multilang\\": ""
+        }
+    }
+}
