@@ -63,8 +63,7 @@ class Lang extends \yii\db\ActiveRecord
      */
     static function getCurrent()
     {
-        if (self::$current === null)
-        {
+        if (self::$current === null) {
             self::$current = self::getDefaultLang();
         }
 
@@ -98,19 +97,13 @@ class Lang extends \yii\db\ActiveRecord
      */
     static function getLangByUrl($url = null)
     {
-        if ($url === null)
-        {
+        if ($url === null) {
             return null;
-        }
-        else
-        {
+        } else {
             $language = Lang::find()->where('url = :url', [':url' => $url])->one();
-            if ($language === null)
-            {
+            if ($language === null) {
                 return null;
-            }
-            else
-            {
+            } else {
                 return $language;
             }
         }

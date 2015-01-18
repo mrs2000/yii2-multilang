@@ -11,8 +11,7 @@ class LangRequest extends Request
 
     public function getLangUrl()
     {
-        if ($this->_lang_url === null)
-        {
+        if ($this->_lang_url === null) {
             $this->_lang_url = $this->getUrl();
 
             $url_list = explode('/', $this->_lang_url);
@@ -21,8 +20,7 @@ class LangRequest extends Request
 
             Lang::setCurrent($lang_url);
 
-            if ($lang_url !== null && $lang_url === Lang::getCurrent()->url && strpos($this->_lang_url, Lang::getCurrent()->url) === 1)
-            {
+            if ($lang_url !== null && $lang_url === Lang::getCurrent()->url && strpos($this->_lang_url, Lang::getCurrent()->url) === 1) {
                 $this->_lang_url = substr($this->_lang_url, strlen(Lang::getCurrent()->url) + 1);
             }
         }
@@ -34,8 +32,7 @@ class LangRequest extends Request
     {
         $pathInfo = $this->getLangUrl();
 
-        if (($pos = strpos($pathInfo, '?')) !== false)
-        {
+        if (($pos = strpos($pathInfo, '?')) !== false) {
             $pathInfo = substr($pathInfo, 0, $pos);
         }
 
@@ -53,32 +50,23 @@ class LangRequest extends Request
             | [\xF1-\xF3][\x80-\xBF]{3}          # planes 4-15
             | \xF4[\x80-\x8F][\x80-\xBF]{2}      # plane 16
             )*$%xs', $pathInfo)
-        )
-        {
+        ) {
             $pathInfo = utf8_encode($pathInfo);
         }
 
         $scriptUrl = $this->getScriptUrl();
         $baseUrl = $this->getBaseUrl();
-        if (strpos($pathInfo, $scriptUrl) === 0)
-        {
+        if (strpos($pathInfo, $scriptUrl) === 0) {
             $pathInfo = substr($pathInfo, strlen($scriptUrl));
-        }
-        elseif ($baseUrl === '' || strpos($pathInfo, $baseUrl) === 0)
-        {
+        } elseif ($baseUrl === '' || strpos($pathInfo, $baseUrl) === 0) {
             $pathInfo = substr($pathInfo, strlen($baseUrl));
-        }
-        elseif (isset($_SERVER['PHP_SELF']) && strpos($_SERVER['PHP_SELF'], $scriptUrl) === 0)
-        {
+        } elseif (isset($_SERVER['PHP_SELF']) && strpos($_SERVER['PHP_SELF'], $scriptUrl) === 0) {
             $pathInfo = substr($_SERVER['PHP_SELF'], strlen($scriptUrl));
-        }
-        else
-        {
+        } else {
             throw new InvalidConfigException('Unable to determine the path info of the current request.');
         }
 
-        if ($pathInfo[0] === '/')
-        {
+        if ($pathInfo[0] === '/') {
             $pathInfo = substr($pathInfo, 1);
         }
 

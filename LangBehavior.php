@@ -48,7 +48,7 @@ class LangBehavior extends Behavior
         $this->_ownerClassShortName = substr($this->_ownerClassName, strrpos($this->_ownerClassName, '\\') + 1);
 
         if (!$this->tableName) {
-            $this->tableName = '{{%'.strtolower($this->_ownerClassShortName).'_lang}}';
+            $this->tableName = '{{%' . strtolower($this->_ownerClassShortName) . '_lang}}';
         }
 
         /** @var \yii\db\ActiveRecord $className */
@@ -120,8 +120,7 @@ class LangBehavior extends Behavior
             $this->languageField => Lang::getCurrent()->id
         ])->one();
 
-        if (empty($translation))
-        {
+        if (empty($translation)) {
             $translation = new $class;
             $translation->{$this->langForeignKey} = $this->owner->getPrimaryKey();
             $translation->{$this->languageField} = Lang::getCurrent()->id;

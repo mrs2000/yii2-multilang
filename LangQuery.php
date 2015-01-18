@@ -8,7 +8,6 @@ class LangQuery extends ActiveQuery
     public $languageField = 'lang_id';
 
     /**
-     * Scope for querying by languages
      * @param $lang_id
      * @return ActiveQuery
      */
