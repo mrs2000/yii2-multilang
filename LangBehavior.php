@@ -3,11 +3,12 @@ namespace mrssoft\multilang;
 
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
+use yii\db\ActiveRecord;
 
 class LangBehavior extends Behavior
 {
     /**
-     * @var \yii\db\ActiveRecord
+     * @var ActiveRecord
      */
     public $owner;
 
@@ -29,9 +30,9 @@ class LangBehavior extends Behavior
     public function events()
     {
         return [
-            \yii\db\ActiveRecord::EVENT_AFTER_FIND => 'afterFind',
-            \yii\db\ActiveRecord::EVENT_AFTER_UPDATE => 'afterUpdate',
-            \yii\db\ActiveRecord::EVENT_AFTER_INSERT => 'afterUpdate',
+            ActiveRecord::EVENT_AFTER_FIND => 'afterFind',
+            ActiveRecord::EVENT_AFTER_UPDATE => 'afterUpdate',
+            ActiveRecord::EVENT_AFTER_INSERT => 'afterUpdate',
         ];
     }
 
@@ -51,7 +52,7 @@ class LangBehavior extends Behavior
             $this->tableName = '{{%' . strtolower($this->_ownerClassShortName) . '_lang}}';
         }
 
-        /** @var \yii\db\ActiveRecord $className */
+        /** @var ActiveRecord $className */
         $className = $this->_ownerClassName;
         $ownerPrimaryKey = $className::primaryKey();
         if (!isset($ownerPrimaryKey[0])) {
@@ -66,34 +67,31 @@ class LangBehavior extends Behavior
             use yii\db\ActiveRecord;
             class ' . $this->_langClassShortName . ' extends ActiveRecord
             {
-                public static function tableName()
-                {
+                public static function tableName() {
                     return \'' . $this->tableName . '\';
                 }
 
-                public function ' . strtolower($this->_ownerClassShortName) . '()
-                {
-                    return $this->hasOne(\'' . $this->_ownerClassName . '\', [\'' . $this->_ownerPrimaryKey . '\' => \'
-                    ' . $this->langForeignKey . '\']);
+                public function ' . strtolower($this->_ownerClassShortName) . '() {
+                    return $this->hasOne(\'' . $this->_ownerClassName . '\', [\'' . $this->_ownerPrimaryKey . '\' => \'' . $this->langForeignKey . '\']);
                 }
             }');
         }
     }
 
     /**
-     * @param $lang_id
+     * @param int $lang_id
      * @return \yii\db\ActiveQuery
      */
     public function getTranslation($lang_id = null)
     {
-        $lang_id = $lang_id ? $lang_id : Lang::getCurrent()->id;
+        $lang_id = $lang_id ?: Lang::getCurrent()->id;
         return $this->owner->hasMany($this->langClassName, [$this->langForeignKey => $this->_ownerPrimaryKey])
-            ->where([$this->languageField => $lang_id]);
+                           ->where([$this->languageField => $lang_id]);
     }
 
     public function afterFind()
     {
-        /** @var \yii\db\ActiveRecord $owner */
+        /** @var ActiveRecord $owner */
         $owner = $this->owner;
 
         $related = $owner->getRelatedRecords();
@@ -112,13 +110,15 @@ class LangBehavior extends Behavior
 
     public function afterUpdate()
     {
-        /** @var \yii\db\ActiveRecord $class */
+        /** @var ActiveRecord $class */
         $class = $this->langClassName;
 
-        $translation = $class::find()->where([
-            $this->langForeignKey => $this->owner->getPrimaryKey(),
-            $this->languageField => Lang::getCurrent()->id
-        ])->one();
+        $translation = $class::find()
+                             ->where([
+                                 $this->langForeignKey => $this->owner->getPrimaryKey(),
+                                 $this->languageField => Lang::getCurrent()->id
+                             ])
+                             ->one();
 
         if (empty($translation)) {
             $translation = new $class;

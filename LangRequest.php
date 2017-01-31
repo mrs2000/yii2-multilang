@@ -1,7 +1,7 @@
 <?php
 namespace mrssoft\multilang;
 
-use Yii;
+use yii;
 use yii\base\InvalidConfigException;
 use yii\web\Request;
 

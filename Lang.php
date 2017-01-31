@@ -2,8 +2,10 @@
 
 namespace mrssoft\multilang;
 
+use yii;
+
 /**
- * This is the model class for table "{{%hap_lang}}".
+ * Модель таблицы языков
  *
  * @property string $id
  * @property string $url
@@ -53,15 +55,15 @@ class Lang extends \yii\db\ActiveRecord
     }
 
     /**
-     * @var null Переменная, для хранения текущего объекта языка
+     * @var Lang Переменная, для хранения текущего объекта языка
      */
-    static $current = null;
+    private static $current;
 
     /**
      * Получение текущего объекта языка
      * @return null|Lang
      */
-    static function getCurrent()
+    public static function getCurrent()
     {
         if (self::$current === null) {
             self::$current = self::getDefaultLang();
@@ -72,48 +74,55 @@ class Lang extends \yii\db\ActiveRecord
 
     /**
      * Установка текущего объекта языка и локаль пользователя
-     * @param null $url
+     * @param string $url
      */
-    static function setCurrent($url = null)
+    public static function setCurrent($url = null)
     {
         $language = self::getLangByUrl($url);
         self::$current = ($language === null) ? self::getDefaultLang() : $language;
-        \Yii::$app->language = self::$current->local;
+        Yii::$app->language = self::$current->local;
     }
 
     /**
      * Получения объекта языка по умолчанию
-     * @return array|null|\yii\db\ActiveRecord
+     * @return null|Lang
      */
-    static function getDefaultLang()
+    public static function getDefaultLang()
     {
-        return Lang::find()->where('`default` = :default', [':default' => 1])->one();
+        return self::find()
+                   ->where(['default' => 1])
+                   ->one();
     }
 
     /**
      * Получения объекта языка по буквенному идентификатору
-     * @param null $url
-     * @return array|null|\yii\db\ActiveRecord
+     * @param string $url
+     * @return array|Lang
      */
-    static function getLangByUrl($url = null)
+    public static function getLangByUrl($url = null)
     {
         if ($url === null) {
             return null;
-        } else {
-            $language = Lang::find()->where('url = :url', [':url' => $url])->one();
-            if ($language === null) {
-                return null;
-            } else {
-                return $language;
-            }
         }
+
+        $language = self::find()
+                        ->where(['url' => $url])
+                        ->one();
+        if ($language === null) {
+            return null;
+        }
+        
+        return $language;
     }
 
     /**
+     * Список языков кроме текущего
      * @return Lang[]
      */
     public static function active()
     {
-        return self::find()->where('id != :id', [':id' => self::getCurrent()->id])->all();
+        return self::find()
+                   ->where(['!=', 'id', self::getCurrent()->id])
+                   ->all();
     }
 }

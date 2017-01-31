@@ -13,12 +13,15 @@ class LangQuery extends ActiveQuery
      */
     public function localized($lang_id = null)
     {
-        if (!$lang_id)
+        if (!$lang_id) {
             $lang_id = Lang::getCurrent()->id;
+        }
 
-        $this->with(['translation' => function ($query) use ($lang_id) {
-            $query->where([$this->languageField => $lang_id]);
-        }]);
+        $this->with([
+            'translation' => function (ActiveQuery $query) use ($lang_id) {
+                $query->where([$this->languageField => $lang_id]);
+            }
+        ]);
         return $this;
     }
 }
